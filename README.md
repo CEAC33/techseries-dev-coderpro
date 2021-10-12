@@ -520,3 +520,212 @@ print(findPythagoreanTriplets2([3, 5, 12, 5, 13]))
 # True
 ```
 
+## Push Dominoes
+
+```python
+class Solution(object):
+  def pushDominoes(self, dominoes):
+    forces = [0] * len(dominoes)
+    max_force = len(dominoes)
+
+    force = 0
+    for i, d in enumerate(dominoes):
+      if d == 'R':
+        force = max_force
+      if d == 'L':
+        force = 0
+      else:
+        force = max(0, force - 1)
+      forces[i] = force
+
+    for i in range(len(dominoes) - 1, -1, -1):
+      d = dominoes[i]
+      if d == 'L':
+        force = max_force
+      if d == 'R':
+        force = 0
+      else:
+        force = max(0, force - 1)
+      forces[i] -= force
+
+    result = ''
+    for f in forces:
+      if f == 0:
+        result += '.'
+      elif f > 0:
+        result += 'R'
+      else:
+        result += 'L'
+    return result
+
+print(Solution().pushDominoes('..R...L..R.'))
+# ..RR.LL..RR
+```
+
+## Simple Calculator
+
+```python
+class Solution(object):
+  def __eval_helper(self, expression, index):
+    op = '+'
+    result = 0
+    value = 0
+    while index < len(expression):
+      char = expression[index]
+      if char in ('+', '-'):
+        op = char
+        if value != 0:
+         result = value
+        value = 0
+      else:
+        if char.isdigit():
+         if value == 0:
+           value = int(char)
+         else:
+           value = int(str(value)+char)
+        elif char == '(':
+          (value, index) = self.__eval_helper(expression, index + 1)
+        else:
+         if op == '+':
+           result += value
+           value = 0
+         if op == '-':
+           result -= value
+           value = 0
+      index += 1
+    if value != 0:
+     if op == '+':
+      result += value
+     if op == '-':
+      result -= value
+    return (result, index)
+
+  def eval(self, expression):
+    return self.__eval_helper(expression, 0)[0]
+
+
+print(Solution().eval('(1 + (2 + (3 + (4 + 5))))'))
+# 15
+print(Solution().eval('26-100 + 12'))
+# -62
+```
+
+## Product Of Array Except Self
+
+```python
+class Solution:
+  def productExceptSelf(self, nums):
+    right = [1] * len(nums)
+    prod = 1
+    for i in range(len(nums) - 2, -1, -1):
+      prod *= nums[i+1]
+      right[i] = prod
+
+    prod = 1
+    for i in range(1, len(nums)):
+      prod *= nums[i-1]
+      right[i] *= prod
+
+    return right
+
+
+print(Solution().productExceptSelf([1, 2, 3, 4]))
+# [24, 12, 8, 6]
+```
+
+## Non Decreasing Array
+
+```python
+class Solution(object):
+  def checkPossibility(self, nums):
+    invalid_index = -1
+    for i in range(len(nums) - 1):
+      if nums[i] > nums[i+1]:
+        if invalid_index != -1:
+          return False
+        invalid_index = i
+
+    if invalid_index == -1:
+      return True
+    if invalid_index == 0:
+      return True
+    if invalid_index == len(nums) - 2:
+      return True
+    if nums[invalid_index] <= nums[invalid_index + 2]:
+      return True
+    if nums[invalid_index - 1] <= nums[invalid_index + 1]:
+      return True
+    return False
+
+print(Solution().checkPossibility([4, 1, 2]))
+# True
+
+print(Solution().checkPossibility([3, 2, 4, 1]))
+# False
+```
+
+## Word Search
+
+```python
+class Grid(object):
+  def __init__(self, matrix):
+    self.matrix = matrix
+
+  def __wordSearchRight(self, index, word):
+    for i in range(len(self.matrix[index])):
+      if word[i] != self.matrix[index][i]:
+        return False
+    return True
+
+  def __wordSearchBottom(self, index, word):
+    for i in range(len(self.matrix)):
+      if word[i] != self.matrix[i][index]:
+        return False
+    return True
+
+  def wordSearch(self, word):
+    for i in range(len(self.matrix)):
+      if self.__wordSearchRight(i, word):
+        return True
+    for i in range(len(self.matrix[0])):
+      if self.__wordSearchBottom(i, word):
+        return True
+    return False
+
+matrix = [
+    ['F', 'A', 'C', 'I'],
+    ['O', 'B', 'Q', 'P'],
+    ['A', 'N', 'O', 'B'],
+    ['M', 'A', 'S', 'S']]
+
+print(Grid(matrix).wordSearch('FOAM'))
+# True
+```
+
+## Top K Frequent Elements
+
+```python
+import heapq
+import collections
+
+class Solution(object):
+  def topKFrequent(self, nums, k):
+    count = collections.defaultdict(int)
+    for n in nums:
+      count[n] += 1
+
+    heap = []
+    for num, c in count.items():
+      heap.append((-c, num))
+    heapq.heapify(heap)
+
+    result = []
+    for i in range(k):
+      result.append(heapq.heappop(heap)[1])
+    return result
+
+print(Solution().topKFrequent([1, 1, 1, 2, 2, 3, ], 2))
+# [1, 2]
+```
+
+
