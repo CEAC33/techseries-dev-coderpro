@@ -352,3 +352,35 @@ input = [[7, 0], [4, 4], [7, 1], [5, 0], [6, 1], [5, 2]]
 print(Solution().reconstructQueue(input))
 # [[5,0], [7, 0], [5, 2], [6, 1], [4, 4], [7, 1]]
 ```
+
+## Find the non-duplicate number
+
+```python
+class Solution(object):
+  def singleNumber(self, nums):
+    occurrence = {}
+
+    for n in nums:
+      occurrence[n] = occurrence.get(n, 0) + 1
+
+    for key, value in occurrence.items():
+      if value == 1:
+        return key
+
+  def singleNumber2(self, nums):
+    unique = 0
+    for n in nums:
+      unique ^= n # XOR
+    return unique
+    
+
+print(Solution().singleNumber2([4, 3, 2, 4, 1, 3, 2]))
+# 1
+```
+
+
+
+
+
+
+
