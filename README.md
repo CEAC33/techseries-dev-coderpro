@@ -2977,140 +2977,767 @@ print(nqueens(5))
 # [(0, 0), (1, 2), (2, 4), (3, 1), (4, 3)]
 ```
 
-## 
+## Sum of Squares
 
 ```python
+def square_sums(n):
+  squares = []
 
+  i = 1
+  while i*i <= n:
+    squares.append(i*i)
+    i = i + 1
+
+  min_sums = [n] * (n + 1)
+  min_sums[0] = 0
+
+  for i in range(n+1):
+    for s in squares:
+      if i+s < len(min_sums):
+        min_sums[i+s] = min(min_sums[i+s], min_sums[i] + 1)
+
+  return min_sums[-1]
+
+
+print(square_sums(13))
+# 2
+# (Because 9 + 4 = 13)
 ```
 
-## 
+## Swap Every Two Nodes
 
 ```python
+class Node:
+  def __init__(self, value, next=None):
+    self.value = value
+    self.next = next
 
+  def __repr__(self):
+    return f"{self.value}, ({self.next.__repr__()})"
+
+
+def swap_every_two(node):
+  curr = node
+  while curr != None and curr.next != None:
+    curr.value, curr.next.value = curr.next.value, curr.value
+    curr = curr.next.next
+  return node
+
+
+node = Node(1, Node(2, Node(3, Node(4, Node(5)))))
+print(swap_every_two(node))
+# 2, 1, 4, 3, 5
 ```
 
-## 
+## Multitasking
 
 ```python
+def findTime(tasks, cooldown):
+  lastPos = {}
+  current = 0
 
+  for task in tasks:
+    if task in lastPos:
+      if current - lastPos[task] <= cooldown:
+        # add cooldown
+        current = cooldown + lastPos[task] + 1
+    lastPos[task] = current
+    current = current + 1
+  return current
+
+print(findTime([1, 1, 2, 1], 2))
+# 7
+# (Because 1+1+2+1+2 = 7)
 ```
 
-## 
+## Generate Binary Search Trees
 
 ```python
+class Node:
+  def __init__(self, value, left=None, right=None):
+    self.value = value
+    self.left = left
+    self.right = right
 
+  def __repr__(self):
+    result = str(self.value)
+    if self.left:
+      result = result + str(self.left)
+    if self.right:
+      result = result + str(self.right)
+    return result
+
+
+def gen_tree(nums):
+  if len(nums) == 0:
+    return [None]
+  if len(nums) == 1:
+    return [Node(nums[0])]
+  bsts = []
+
+  for n in nums:
+    lefts = gen_tree(range(nums[0], n))
+    rights = gen_tree(range(n + 1, nums[-1] + 1))
+
+    for left in lefts:
+      for right in rights:
+        tree = Node(n, left, right)
+        bsts.append(tree)
+
+  return bsts
+
+
+def generate_bst(n):
+  return gen_tree(range(1, n + 1))
+
+
+print(generate_bst(3))
+# 5 trees
 ```
 
-## 
+## Zig-Zag Binary Trees
 
 ```python
+class Node:
+  def __init__(self, value, left=None, right=None):
+    self.value = value
+    self.left = left
+    self.right = right
 
+
+def zigzag_order(node):
+  result = []
+  currLevel = [node]
+  nextLevel = []
+  leftToRight = False
+
+  while len(currLevel) > 0:
+    node = currLevel.pop()
+    result.append(node.value)
+
+    if leftToRight:
+      if node.left:
+        nextLevel.append(node.left)
+      if node.right:
+        nextLevel.append(node.right)
+    if leftToRight != True:
+      if node.right:
+        nextLevel.append(node.right)
+      if node.left:
+        nextLevel.append(node.left)
+
+    if len(currLevel) == 0:
+      leftToRight = not leftToRight
+      currLevel = nextLevel
+      nextLevel = []
+
+  return result
+
+
+n7 = Node(7)
+n6 = Node(6)
+n5 = Node(5)
+n4 = Node(4)
+n3 = Node(3, n6, n7)
+n2 = Node(2, n4, n5)
+n1 = Node(1, n2, n3)
+
+print(zigzag_order(n1))
+# [1, 2, 3, 7, 6, 5, 4]
 ```
 
-## 
+## Balanced Binary Trees
 
 ```python
+class Node:
+  def __init__(self, value, left=None, right=None):
+    self.value = value
+    self.left = left
+    self.right = right
 
+
+def tree_height(node):
+  if node is None:
+    return 0
+
+  heightLeft = tree_height(node.left)
+  heightRight = tree_height(node.right)
+
+  if heightLeft >= 0 and heightRight >= 0 and abs(heightLeft - heightRight) <= 1:
+    return max(heightLeft, heightRight) + 1
+  return -1
+
+
+def is_tree_balanced(node):
+  return tree_height(node) != -1
+
+
+n4 = Node(4)
+n3 = Node(3)
+n2 = Node(2, n4)
+n1 = Node(1, n2, n3)
+
+#      1
+#     / \
+#    2   3
+#   /
+#  4
+print(is_tree_balanced(n1))
+# True
+
+n4 = Node(4)
+n2 = Node(2, n4)
+n1 = Node(1, n2, None)
+
+#      1
+#     /
+#    2
+#   /
+#  4
+print(is_tree_balanced(n1))
+# False
 ```
 
-## 
+## Character Mapping
 
 ```python
+def has_character_map(s1, s2):
+  if len(s1) != len(s2):
+    return False
 
+  chars = {}
+  for i in range(len(s1)):
+    if s1[i] not in chars:
+      chars[s1[i]] = s2[i]
+    else:
+      if chars[s1[i]] != s2[i]:
+        return False
+  return True
+
+
+print(has_character_map('abc', 'def'))
+# True
+
+print(has_character_map('aac', 'def'))
+# False
 ```
 
-## 
+## Reverse Polish Notation Calculator
 
 ```python
+def calc(inputs):
+  stack = []
 
+  for i in inputs:
+    if i in ('-', '+', '*', '/'):
+      b = stack.pop()
+      a = stack.pop()
+      if i == '-':
+        stack.append(a - b)
+      if i == '+':
+        stack.append(a + b)
+      if i == '*':
+        stack.append(a * b)
+      if i == '/':
+        stack.append(a / b)
+    else:
+      stack.append(i)
+  return stack[0]
+
+print(calc([1, 2, 3, '+', 2, '*', '-']))
+# -9
 ```
 
-## 
+## Maze Paths
 
 ```python
+def paths_through_maze(maze):
+  paths = [[0] * len(maze[0]) for _ in range(len(maze))]
+  paths[0][0] = 1
+  for i, row in enumerate(maze):
+    for j, val in enumerate(row):
+      if val == 1 or (i == 0 and j == 0):
+        continue
 
+      leftPaths = 0
+      topPaths = 0
+      if i > 0:
+        leftPaths = paths[i - 1][j]
+      if j > 0:
+        topPaths = paths[i][j-1]
+      paths[i][j] = leftPaths + topPaths
+  print(paths)
+  return paths[-1][-1]
+
+
+print(paths_through_maze([[0, 1, 0],
+                          [0, 0, 1],
+                          [0, 0, 0]]))
+
+# [[1, 0, 0], [1, 1, 0], [1, 2, 2]]
+# 2
 ```
 
-## 
+## Filter Leaves of a Binary Tree
 
 ```python
+class Node:
+  def __init__(self, value, left=None, right=None):
+    self.value = value
+    self.left = left
+    self.right = right
 
+  def __repr__(self):
+    return f"{self.value}, ({self.left.__repr__()}), ({self.right.__repr__()})"
+
+
+def filter(node, n):
+  if not node:
+    return None
+
+  node.left = filter(node.left, n)
+  node.right = filter(node.right, n)
+
+  if node.value != n and not node.left and not node.right:
+    return None
+
+  return node
+
+
+#     1
+#    / \
+#   2   1
+#  /   /
+# 2   1
+n1 = Node(1, Node(2, Node(2), Node(1, Node(1))))
+print(filter(n1, 2))
+# 1, (2, (2, (None), (None)), (None)), (None)
 ```
 
-## 
+## Frequent Subtree Sum
 
 ```python
+from collections import defaultdict
 
+
+class Node():
+  def __init__(self, value, left=None, right=None):
+    self.val = value
+    self.left = left
+    self.right = right
+
+
+def _build_frequencies(root, counter):
+  if root == None:
+    return 0
+  total = root.val + \
+      _build_frequencies(root.left, counter) + \
+      _build_frequencies(root.right, counter)
+  counter[total] += 1
+  return total
+
+
+def most_freq_subtree_sum(root):
+  counter = defaultdict(int)
+  _build_frequencies(root, counter)
+  most_common_sum = 0
+  for k in list(counter):
+    if counter[k] > counter[most_common_sum]:
+      most_common_sum = k
+  return most_common_sum
+
+
+root = Node(3, Node(1), Node(-3))
+print(most_freq_subtree_sum(root))
+# 1
 ```
 
-## 
+## Partition a List
 
 ```python
+def partition(nums, k):
+  low = 0
+  high = len(nums) - 1
 
+  i = 0
+  while i <= high:
+    n = nums[i]
+    if n > k:
+      nums[high], nums[i] = nums[i], nums[high]
+      high -= 1
+    if n < k:
+      nums[low], nums[i] = nums[i], nums[low]
+      low += 1
+      i += 1
+    if n == k:
+      i += 1
+
+  return nums
+
+
+def partitionSort(nums, k):
+  return sorted(nums)
+
+
+def partitionCopy(nums, k):
+  a = []
+  b = []
+  for n in nums:
+    if n < k:
+      a.append(n)
+    else:
+      b.append(n)
+  return a + b
+
+
+print(partition([8, 9, 9, 2, 4, 1, 1, 0], 3))
+# [0, 1, 1, 2, 4, 9, 9, 8]
 ```
 
-## 
+## Arithmetic Binary Tree
 
 ```python
+class Node:
+  def __init__(self, value, left=None, right=None):
+    self.value = value
+    self.left = left
+    self.right = right
 
+
+def evaluate(node):
+  operators = {
+      '+': lambda a, b: a + b,
+      '-': lambda a, b: a - b,
+      '/': lambda a, b: a / b,
+      '*': lambda a, b: a * b,
+  }
+
+  if node.value in operators:
+    fn = operators[node.value]
+    return fn(evaluate(node.left), evaluate(node.right))
+  else:
+    return node.value
+
+  return 0
+
+
+node = Node('*')
+node.left = Node('+')
+node.right = Node('+')
+node.left.left = Node(3)
+node.left.right = Node(2)
+node.right.left = Node(4)
+node.right.right = Node(5)
+
+print(evaluate(node))
+# 45
 ```
 
-## 
+## Searching A Matrix
 
 ```python
+def searchMatrix(mat, value):
+  if len(mat) == 0:
+    return False
 
+  rows = len(mat)
+  cols = len(mat[0])
+
+  low = 0
+  high = rows * cols
+  while low < high:
+    mid = (low + high) // 2
+    mid_value = mat[mid // cols][mid % cols]
+
+    if mid_value == value:
+      return True
+    if mid_value < value:
+      low = mid + 1
+    else:
+      high = mid
+
+  return False
+
+
+mat = [
+    [1, 3, 5, 8],
+    [10, 11, 15, 16],
+    [24, 27, 30, 31],
+]
+
+print(searchMatrix(mat, 4))
+# False
+
+print(searchMatrix(mat, 10))
+# True
 ```
 
-## 
+## H Index
 
 ```python
+def hIndex(pubs):
+  n = len(pubs)
+  freqs = [0] * (n + 1)
 
+  for pub in pubs:
+    if pub >= n:
+      freqs[n] += 1
+    else:
+      freqs[pub] += 1
+
+  total = 0
+  i = n
+  while i >= 0:
+    total += freqs[i]
+    if total >= i:
+      return i
+    i -= 1
+  return 0
+
+
+print(hIndex([5, 3, 3, 1, 0]))
+# 3
+# (3 papers cited at least 3 times)
 ```
 
-## 
+## Number of 1 Bits
 
 ```python
+def one_bits(n):
+  count = 0
+  while n > 0:
+    if n & 1:
+      count = count + 1
+    n = n >> 1
+  return count
 
+print(one_bits(23))
+# 0b10111
 ```
 
-## 
+## Jump To The End
 
 ```python
+def jumpToEnd(nums):
+  hops = [float('inf')] * len(nums)
+  hops[0] = 0
 
+  for i, n in enumerate(nums):
+    for j in range(1, n + 1):
+      if i + j < len(hops):
+        hops[i + j] = min(hops[i + j], hops[i] + 1)
+      else:
+        break
+  return hops[-1]
+
+
+print(jumpToEnd([3, 2, 5, 1, 1, 9, 3, 4]))
+# 2
+# 3-5, 5-4
 ```
 
-## 
+## Fixed Point
 
 ```python
+def find_fixed_point_helper(low, high, nums):
+  if low == high:
+    return None
 
+  mid = int((low + high) / 2)
+  if nums[mid] == mid:
+    return mid
+  if nums[mid] < mid:
+    return find_fixed_point_helper(mid+1, high, nums)
+  else:
+    return find_fixed_point_helper(low, mid, nums)
+
+
+def find_fixed_point(nums):
+  return find_fixed_point_helper(0, len(nums), nums)
+
+
+def find_fixed_point_iterative(nums):
+  low = 0
+  high = len(nums)
+
+  while (low != high):
+    mid = int((low + high) / 2)
+    if nums[mid] == mid:
+      return mid
+    if nums[mid] < mid:
+      low = mid + 1
+    else:
+      high = mid
+
+  return None
+
+
+print(find_fixed_point([-5, 1, 3, 4]))
+# 1
+
+print(find_fixed_point_iterative([-5, 1, 3, 4]))
+# 1
 ```
 
-## 
+## Number of Cousins
 
 ```python
+class Node(object):
+  def __init__(self, value, left=None, right=None):
+    self.value = value
+    self.left = left
+    self.right = right
 
+
+class Solution(object):
+  def _nodes_at_height(self, node, height, exclude):
+    if node == None or node == exclude:
+      return []
+    if height == 0:
+      return [node.value]
+    return (self._nodes_at_height(node.left, height - 1, exclude) +
+            self._nodes_at_height(node.right, height - 1, exclude))
+
+  def _find_node(self, node, target, parent, height):
+    if not node:
+      return False
+    if node == target:
+      return (height, parent)
+    return (self._find_node(node.left, target, node, height + 1) or
+            self._find_node(node.right, target, node, height + 1))
+
+  def list_cousins(self, node, target):
+    height, parent = self._find_node(node, target, None, 0)
+    return self._nodes_at_height(node, height, parent)
+
+
+#     1
+#    / \
+#   2   3
+#  / \    \
+# 4   6    5
+root = Node(1)
+root.left = Node(2)
+root.left.left = Node(4)
+root.left.right = Node(6)
+root.right = Node(3)
+root.right.right = Node(5)
+print(Solution().list_cousins(root, root.right.right))
+# [4, 6]
 ```
 
-## 
+## Longest Increasing Subsequence
 
 ```python
+def longest_increasing_subsequence(arr):
+  cache = [1] * len(arr)
+  for i in range(1, len(arr)):
+    for j in range(i):
+      if arr[i] > arr[j]:
+        cache[i] = max(cache[i], cache[j] + 1)
+  return max(cache)
 
+
+print(longest_increasing_subsequence(
+    [0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3]))
+# 5
 ```
 
-## 
+## Distribute Bonuses
 
 ```python
+def getBonuses(performances):
+  count = len(performances)
+  bonuses = [1] * count
 
+  for i in range(1, count):
+    if performances[i - 1] < performances[i]:
+      bonuses[i] = bonuses[i - 1] + 1
+
+  for i in range(count - 2, -1, -1):
+    if performances[i + 1] < performances[i]:
+      bonuses[i] = max(bonuses[i], bonuses[i + 1] + 1)
+
+  return bonuses
+
+print(getBonuses([1, 2, 3, 4, 3, 1]))
+# [1, 2, 3, 4, 2, 1]
 ```
 
-## 
+## Word Concatenation
 
 ```python
+class Solution(object):
+  def findAllConcatenatedWords(self, words):
+    wordDict = set(words)
+    cache = {}
+    return [word for word in words if self._canForm(word, wordDict, cache)]
 
+  def _canForm(self, word, wordDict, cache):
+    if word in cache:
+      return cache[word]
+    for index in range(1, len(word)):
+      prefix = word[:index]
+      suffix = word[index:]
+      if prefix in wordDict:
+        if suffix in wordDict or self._canForm(suffix, wordDict, cache):
+          cache[word] = True
+          return True
+    cache[word] = False
+    return False
+
+input = ['cat', 'cats', 'dog', 'catsdog']
+print(Solution().findAllConcatenatedWords(input))
+# ['catsdog']
 ```
 
-## 
+## Running Median
 
 ```python
+import heapq
 
+def add(num, min_heap, max_heap):
+  if len(min_heap) + len(max_heap) <= 1:
+    heapq.heappush(max_heap, -num)
+    return
+
+  median = get_median(min_heap, max_heap)
+  if num > median:
+    heapq.heappush(min_heap, num)
+  else:
+    heapq.heappush(max_heap, -num)
+
+def rebalance(min_heap, max_heap):
+  if len(min_heap) > len(max_heap) + 1:
+    root = heapq.heappop(min_heap)
+    heapq.heappush(max_heap, -root)
+  elif len(max_heap) > len(min_heap) + 1:
+    root = -heapq.heappop(max_heap)
+    heapq.heappush(min_heap, root)
+
+def print_median(min_heap, max_heap):
+  print(get_median(min_heap, max_heap))
+
+
+def get_median(min_heap, max_heap):
+  if len(min_heap) > len(max_heap):
+    return min_heap[0]
+  elif len(min_heap) < len(max_heap):
+    return -max_heap[0]
+  else:
+    return (min_heap[0] + -max_heap[0]) / 2.0
+
+
+def running_median(stream):
+  min_heap = []
+  max_heap = []
+  answer = []
+  for num in stream:
+    add(num, min_heap, max_heap)
+    rebalance(min_heap, max_heap)
+    answer.append(get_median(min_heap, max_heap))
+  return answer
+
+print(running_median([2, 1, 4, 7, 2, 0, 5]))
+# [2, 1.5, 2, 3, 2, 2, 2]
 ```
