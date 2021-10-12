@@ -17,3 +17,18 @@ A lot of candidates get stuck here by either getting too deep in nitty gritty de
 One more tip - do not say "This is O(m + v + e)," when you haven't defined what m, v, or e are.  You generally want to say "... where m is the height of the matrix, v is the number of vertices, e is the number of edges, etc.,"  Once you start reciting formulas without defining the constants you're using, your analysis will appear amateurish.
 
 Most interviewers will focus on time-complexity, but it is great to also consider space-complexity too.  Algorithms are commonly tradeoffs between time and space.  For instance, you may be able to take a polynomial algorithm and convert it to an O(n) algorithm, but it requires creation of a hashmap of size O(n).  That's a good trade-off to be able to talk about because additional space is needed.
+
+## Setup
+
+Code Runner for VSCode
+
+ ```
+  "code-runner.clearPreviousOutput": true,
+  "code-runner.executorMap": {
+    "python":"python3",
+  },
+ ```
+ 
+ Or Online Python interpreter
+
+https://replit.com/languages/python3
