@@ -2295,124 +2295,686 @@ print(s.autocomplete('do'))
 # ['dog', 'door', 'dodge']
 ```
 
-## 
+## Fibonacci Number
 
 ```python
+def fib(n):
+  a = 0
+  b = 1
+  if n == 0:
+    return a
+  if n == 1:
+    return b
 
+  for _ in range(2, n+1):
+    value = a + b
+
+    a = b
+    b = value
+  return value
+
+
+print(fib(10))
+# 55
 ```
 
-## 
+## Roman Numerals to Decimal
 
 ```python
+class Solution():
+  def romanToInt(self, s):
+    romanNumerals = {'I': 1, 'V': 5, 'X': 10,
+                     'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+    prev = 0
+    sum = 0
+    for i in s[::-1]:
+      curr = romanNumerals[i]
+      if prev > curr:
+        sum -= curr
+      else:
+        sum += curr
+      prev = curr
+    return sum
 
+n = 'MCMIV'
+print(Solution().romanToInt(n))
+# 1904
 ```
 
-## 
+## Subarray With Target Sum
 
 ```python
+# def find_continuous_k(list, k):
+#   for start in range(len(list)):
+#     sum = 0
+#     for end in range(start, len(list)):
+#       sum += list[end]
+#       if sum == k:
+#         return list[start:end + 1]
+#   return None
 
+
+def find_continuous_k(list, k):
+  previous_sums = {0: -1}
+  sum = 0
+  for index, n in enumerate(list):
+    sum += n
+    previous_sums[sum] = index
+    if previous_sums.get(sum - k):
+      return list[previous_sums[sum-k] + 1: index + 1]
+  return None
+
+
+print(find_continuous_k([1, 3, 2, 5, 7, 2], 14))
+# [2, 5, 7]
 ```
 
-## 
+## Absolute Paths
 
 ```python
+def clean_path(path):
+  folders = path.split('/')
+  stack = []
 
+  for folder in folders:
+    if folder == '.':
+      pass
+    elif folder == '..':
+      stack.pop()
+    else:
+      stack.append(folder)
+  return '/'.join(stack)
+
+path = '/users/tech/docs/.././desk/../'
+print(clean_path(path))
+# /users/tech/
 ```
 
-## 
+## Consecutive Bit Ones
 
 ```python
+def longest_run(n):
+  longest_run = 0
+  current_run = 0
+  BITMASK = 1
 
+  while n != 0:
+    if n & BITMASK == 0:
+      longest_run = max(longest_run, current_run)
+      current_run = 0
+    else:
+      current_run += 1
+    n = n >> 1
+  longest_run = max(longest_run, current_run)
+  return longest_run
+
+print(longest_run(242))
+# 4
+# (Because it's 11110010)
 ```
 
-## 
+## Anagrams in a String
 
 ```python
+from collections import defaultdict
 
+
+def find_anagrams(a, b):
+  char_map = defaultdict(int)
+
+  for c in b:
+    char_map[c] += 1
+
+  results = []
+  for i in range(len(a)):
+    c = a[i]
+
+    if i >= len(b):
+      c_old = a[i - len(b)]
+      char_map[c_old] += 1
+      if char_map[c_old] == 0:
+        del char_map[c_old]
+
+    char_map[c] -= 1
+    if char_map[c] == 0:
+      del char_map[c]
+
+    if i + 1 >= len(b) and len(char_map) == 0:
+      results.append(i - len(b) + 1)
+
+  return results
+
+
+print(find_anagrams('acdbacdacb', 'abc'))
+# [3, 7]
+# (Because bac is an anagram)
+# (And acb is another)
 ```
 
-## 
+## Check for Palindrome
 
 ```python
+from collections import defaultdict
 
+def find_palindrome(str):
+  char_counts = defaultdict(int)
+
+  for c in str:
+    char_counts[c] += 1
+
+  pal = ''
+  odd_char = ''
+  for c, cnt in char_counts.items():
+    if cnt % 2 == 0:
+      pal += c * (cnt // 2)
+    elif odd_char == '':
+      odd_char = c
+      pal += c * (cnt // 2)
+    else:
+      return False
+  return pal + odd_char + pal[::-1]
+
+
+print(find_palindrome('foxfo'))
+# foxof
+# (Because is spelled foxof backwards)
 ```
 
-## 
+## Rectangle Intersection
 
 ```python
+class Rectangle(object):
+  def __init__(self, min_x=0, min_y=0, max_x=0, max_y=0):
+    self.min_x = min_x
+    self.min_y = min_y
+    self.max_x = max_x
+    self.max_y = max_y
 
+  def area(self):
+    if self.min_x >= self.max_x:
+      return 0
+    if self.min_y >= self.max_y:
+      return 0
+    return (self.max_x - self.min_x) * (self.max_y - self.min_y)
+
+
+def intersect_rect(a, b):
+  return Rectangle(max(a.min_x, b.min_x),
+                   max(a.min_y, b.min_y),
+                   min(a.max_x, b.max_x),
+                   min(a.max_y, b.max_y))
+
+
+a = Rectangle(0, 0, 3, 2)
+b = Rectangle(1, 1, 3, 3)
+
+intersection = intersect_rect(a, b)
+print(intersection.area())
+# 2
 ```
 
-## 
+## Find Subtree
 
 ```python
+class Node:
+  def __init__(self, value, left=None, right=None):
+    self.value = value
+    self.left = left
+    self.right = right
 
+
+n = Node(1)
+n.left = Node(4)
+n.right = Node(5)
+n.left.left = Node(3)
+n.left.right = Node(2)
+n.right.left = Node(4)
+n.right.right = Node(1)
+
+b = Node(4)
+b.left = Node(3)
+b.right = Node(2)
+
+
+def pre(n):
+  if not n:
+    return 'null'
+  return '-' + str(n.value) + '-' + pre(n.left) + '-' + pre(n.right)
+
+
+def find_subtree(a, b):
+  return pre(b) in pre(a)
+
+
+def find_subtree2(a, b):
+  if not a:
+    return False
+
+  is_match = a.value == b.value
+  if is_match:
+    is_match_left = (not a.left or not b.left) or find_subtree2(a.left, b.left)
+    if is_match_left:
+      is_match_right = (not a.right or not b.right) or find_subtree2(
+          a.right, b.right)
+      if is_match_right:
+        return True
+
+  return find_subtree2(a.left, b) or find_subtree2(a.right, b)
+
+
+print(find_subtree(n, b))
+# True
+
+print(find_subtree2(n, b))
+# True
 ```
 
-## 
+## Determine if Number
 
 ```python
+from enum import Enum
 
+
+class DigitState(Enum):
+  BEGIN = 0
+  NEGATIVE1 = 1
+  DIGIT1 = 2
+  DOT = 3
+  DIGIT2 = 4
+  E = 5
+  NEGATIVE2 = 6
+  DIGIT3 = 7
+
+
+STATE_VALIDATOR = {
+    DigitState.BEGIN: lambda x: True,
+    DigitState.DIGIT1: lambda x: x.isdigit(),
+    DigitState.NEGATIVE1: lambda x: x == '-',
+    DigitState.DIGIT2: lambda x: x.isdigit(),
+    DigitState.DOT: lambda x: x == '.',
+    DigitState.E: lambda x: x == 'e',
+    DigitState.NEGATIVE2: lambda x: x == '-',
+    DigitState.DIGIT3: lambda x: x.isdigit(),
+}
+
+NEXT_STATES_MAP = {
+    DigitState.BEGIN: [DigitState.NEGATIVE1, DigitState.DIGIT1],
+    DigitState.NEGATIVE1: [DigitState.DIGIT1, DigitState.DOT],
+    DigitState.DIGIT1: [DigitState.DIGIT1, DigitState.DOT, DigitState.E],
+    DigitState.DOT: [DigitState.DIGIT2],
+    DigitState.DIGIT2: [DigitState.DIGIT2, DigitState.E],
+    DigitState.NEGATIVE2: [DigitState.DIGIT3],
+    DigitState.DIGIT3: [DigitState.DIGIT3],
+}
+
+
+def parse_number(str):
+  state = DigitState.BEGIN
+
+  for c in str:
+    found = False
+    for next_state in NEXT_STATES_MAP[state]:
+      if STATE_VALIDATOR[next_state](c):
+        state = next_state
+        found = True
+        break
+    if not found:
+      return False
+
+  return state in [DigitState.DIGIT1, DigitState.DIGIT2, DigitState.DIGIT3]
+
+
+print(parse_number('12.3'))
+# True
+
+print(parse_number('12a'))
+# False
 ```
 
-## 
+## First Recurring Character
 
 ```python
+def first_recurring_character(str):
+  seen = set()
 
+  for c in str:
+    if c in seen:
+      return c
+    seen.add(c)
+
+  return None
+
+
+print(first_recurring_character('qwertty'))
+# t
+
+print(first_recurring_character('qwerty'))
+# None
 ```
 
-## 
+## Inorder Successor
 
 ```python
+class Node:
+  def __init__(self, value, left=None, right=None, parent=None):
+    self.value = value
+    self.left = left
+    self.right = right
+    self.parent = parent
 
+  def __repr__(self):
+    return f"({self.value}, {self.left}, {self.right}"
+
+
+tree = Node(4)
+tree.left = Node(2)
+tree.right = Node(8)
+tree.left.parent = tree
+tree.right.parent = tree
+tree.left.left = Node(1)
+tree.left.left.parent = tree.left
+tree.right.right = Node(7)
+tree.right.right.parent = tree.right
+tree.right.left = Node(5)
+tree.right.left.parent = tree.right
+tree.right.left.right = Node(7)
+tree.right.left.right.parent = tree.right.left
+tree.right.right = Node(9)
+tree.right.right.parent = tree.right
+#     4
+#    / \
+#   2   8
+#  /   / \
+# 1   5   9
+#      \
+#       7
+
+
+def in_order_successor(node):
+  if node.right:
+    curr = node.right
+    while curr.left:
+      curr = curr.left
+    return curr
+
+  curr = node
+  parent = curr.parent
+  while parent and parent.left != curr:
+    curr = parent
+    parent = parent.parent
+  return parent
+
+print(in_order_successor(tree.right))
+# 9
+
+print(in_order_successor(tree.left))
+# 4
+
+print(in_order_successor(tree.right.left.right))
+# 8
 ```
 
-## 
+## Rotate Linked List
 
 ```python
+class Node:
+  def __init__(self, value, next=None):
+    self.value = value
+    self.next = next
 
+  def __repr__(self):
+    return f"({self.value}, {self.next})"
+
+def rotate(node, n):
+  length = 0
+  curr = node
+  while curr != None:
+    curr = curr.next
+    length +=1
+  n = n % length
+
+  slow, fast = node, node
+  for i in range(n):
+    fast = fast.next
+
+  while fast.next != None:
+    slow = slow.next
+    fast = fast.next
+
+  fast.next = node
+  head = slow.next
+  slow.next = None
+
+  return head
+
+node = Node(1, Node(2, Node(3, Node(4, Node(5)))))
+
+print(rotate(node, 2))
+# 4, 5, 1, 2, 3
 ```
 
-## 
+## Remove Duplicate From Linked List
 
 ```python
+class Node(object):
+  def __init__(self, value, next=None):
+    self.value = value
+    self.next = next
 
+  def __repr__(self):
+    return f"({self.value}, {self.next})"
+
+
+def remove_duplicates(node):
+  curr = node
+
+  while curr and curr.next:
+    if curr.value == curr.next.value:
+      curr.next = curr.next.next
+    else:
+      curr = curr.next
+
+
+node = Node(1, Node(2, Node(2, Node(3, Node(3)))))
+remove_duplicates(node)
+print(node)
+# (1, (2, (3, None)))
 ```
 
-## 
+## Optimized List Sum
 
 ```python
+class ListFastSum(object):
+  def __init__(self, nums):
+    self.pre = [0]
 
+    sum = 0
+    for num in nums:
+      sum += num
+      self.pre.append(sum)
+
+  def sum(self, start, end):
+    return self.pre[end] - self.pre[start]
+
+
+print(ListFastSum([1, 2, 3, 4, 5, 6, 7]).sum(2, 5))
+# 12
+# (Because 3 + 4 + 5 = 12)
 ```
 
-## 
+## Sorted Square Numbers
 
 ```python
+def square_numbers(nums):
+  neg_i = -1
+  i = 0
 
+  result = []
+  for n in nums:
+    if n >= 0:
+      if neg_i == -1:
+        neg_i = i - 1
+
+      while neg_i >= 0 and nums[neg_i] < 0 and -nums[neg_i] < nums[i]:
+        val = nums[neg_i]
+        result.append(val * val)
+        neg_i -= 1
+
+      val = nums[i]
+      result.append(val * val)
+    i += 1
+
+  while neg_i >= 0 and nums[neg_i] < 0:
+    val = nums[neg_i]
+    result.append(val * val)
+    neg_i -= 1
+
+  return result
+
+
+print(square_numbers([-5, -3, -1, 0, 1, 4, 5]))
+# [0, 1, 1, 9, 16, 25, 25]
 ```
 
-## 
+## String to Integer
 
 ```python
+def convert_to_int(str):
+  is_negative = False
+  start_index = 0
+  if str[0] == '-':
+    is_negative = True
+    start_index = 1
 
+  result = 0
+  for c in str[start_index:]:
+    result = result * 10 + ord(c) - ord('0')
+
+  if is_negative:
+    result *= -1
+  return result
+
+
+print(convert_to_int('-105') + 1)
+# -104
 ```
 
-## 
+## Shortest Unique Prefix
 
 ```python
+class Node:
+  def __init__(self):
+    self.count = 0
+    self.children = {}
 
+
+class Trie:
+  def __init__(self):
+    self.root = Node()
+
+  def insert(self, word):
+    node = self.root
+
+    for c in word:
+      if c not in node.children:
+        node.children[c] = Node()
+      node = node.children[c]
+      node.count = node.count + 1
+
+  def unique_prefix(self, word):
+    node = self.root
+    prefix = ''
+
+    for c in word:
+      if node.count == 1:
+        return prefix
+      else:
+        node = node.children[c]
+        prefix += c
+    return prefix
+
+
+def shortest_unique_prefix(words):
+  trie = Trie()
+
+  for word in words:
+    trie.insert(word)
+
+  unique_prefixes = []
+  for word in words:
+    unique_prefixes.append(trie.unique_prefix(word))
+
+  return unique_prefixes
+
+
+print(shortest_unique_prefix(['jon', 'john', 'jack', 'techlead']))
+# ['jon', 'joh', 'ja', 't']
 ```
 
-## 
+## Make the Largest Number
 
 ```python
+from functools import cmp_to_key
 
+def largestNum(nums):
+  sorted_nums = sorted(nums, key=cmp_to_key(
+      lambda a, b:
+      1 if str(a) + str(b) < str(b) + str(a)
+      else -1)
+  )
+  return ''.join(str(n) for n in sorted_nums)
+
+
+print(largestNum([17, 7, 2, 45, 72]))
+# 77245217
 ```
 
-## 
+## N Queens
 
 ```python
+def nqueens_helper(n, row, col, asc_diag, desc_diag, queen_pos):
+  if len(queen_pos) == n:
+    return queen_pos
 
+  curr_row = len(queen_pos)
+  for curr_col in range(n):
+    if col[curr_col] and row[curr_row] and asc_diag[curr_row + curr_col] and desc_diag[curr_row - curr_col]:
+      col[curr_col] = False
+      row[curr_row] = False
+      asc_diag[curr_row + curr_col] = False
+      desc_diag[curr_row - curr_col] = False
+
+      queen_pos.append((curr_row, curr_col))
+      nqueens_helper(n, row, col, asc_diag, desc_diag, queen_pos)
+
+      if len(queen_pos) == n:
+        return queen_pos
+
+      # backtrack
+      col[curr_col] = True
+      row[curr_row] = True
+      asc_diag[curr_row + curr_col] = True
+      desc_diag[curr_row - curr_col] = True
+      queen_pos.pop()
+
+  return queen_pos
+
+
+def nqueens(n):
+  col = [True] * n
+  row = [True] * n
+  asc_diag = [True] * (n * 2 - 1)
+  desc_diag = [True] * (n * 2 - 1)
+  return nqueens_helper(n, col, row, asc_diag, desc_diag, [])
+
+
+print(nqueens(5))
+# Q . . . .
+# . . . Q .
+# . Q . . .
+# . . . . Q
+# . . Q . .
+# [(0, 0), (1, 2), (2, 4), (3, 1), (4, 3)]
 ```
 
 ## 
